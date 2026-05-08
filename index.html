@@ -1,0 +1,64 @@
+---
+layout: default
+title: "CTF Writeups"
+---
+
+<section class="hero">
+  <h1><span class="prompt">$</span> cat writeups.md</h1>
+  <p>CTF competition writeups — web exploitation, binary exploitation, cryptography, forensics, reverse engineering, and more.</p>
+</section>
+
+{% assign all_posts = site.posts %}
+{% assign total = all_posts | size %}
+{% assign ctfs = all_posts | map: "ctf" | uniq | compact | size %}
+{% assign categories = all_posts | map: "category" | uniq | compact %}
+
+{% if total > 0 %}
+<div class="stats-bar">
+  <div class="stat">
+    <span class="stat-num">{{ total }}</span>
+    <span class="stat-label">Writeups</span>
+  </div>
+  <div class="stat">
+    <span class="stat-num">{{ ctfs }}</span>
+    <span class="stat-label">CTFs</span>
+  </div>
+  <div class="stat">
+    <span class="stat-num">{{ categories | size }}</span>
+    <span class="stat-label">Categories</span>
+  </div>
+</div>
+
+<div class="filter-bar">
+  <button class="filter-btn active" data-filter="all">All</button>
+  {% for cat in categories %}
+    <button class="filter-btn" data-filter="{{ cat }}">{{ cat }}</button>
+  {% endfor %}
+</div>
+{% endif %}
+
+<div class="writeup-list" id="writeup-list">
+  {% if all_posts.size == 0 %}
+    <p style="color:var(--muted);font-family:var(--font-mono);text-align:center;padding:3rem 0;">
+      No writeups yet — add your first one in <code>_posts/</code>
+    </p>
+  {% else %}
+    {% for post in all_posts %}
+      <a href="{{ post.url | relative_url }}" class="writeup-card" data-category="{{ post.category | default: 'misc' }}">
+        <span class="card-cat {{ post.category | default: 'misc' }}">{{ post.category | default: "misc" }}</span>
+        <div class="card-body">
+          <div class="card-title">{{ post.title }}</div>
+          <div class="card-meta">{{ post.ctf | default: "Unknown CTF" }}</div>
+        </div>
+        <div class="card-right">
+          {% if post.difficulty %}
+            <span class="diff-badge {{ post.difficulty }}">{{ post.difficulty }}</span>
+          {% endif %}
+          <span class="card-date">{{ post.date | date: "%Y-%m-%d" }}</span>
+        </div>
+      </a>
+    {% endfor %}
+  {% endif %}
+</div>
+
+<script src="{{ '/assets/js/filter.js' | relative_url }}"></script>

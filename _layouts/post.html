@@ -1,0 +1,42 @@
+---
+layout: default
+---
+
+<article>
+  <header class="post-header">
+    <p class="post-breadcrumb">
+      <a href="{{ '/' | relative_url }}">~/writeups</a>
+      &nbsp;/&nbsp;{{ page.ctf | default: "CTF" }}
+      &nbsp;/&nbsp;{{ page.category | default: "misc" }}
+    </p>
+
+    <h1 class="post-title">{{ page.title }}</h1>
+
+    <div class="post-badges">
+      {% if page.category %}
+        <span class="card-cat {{ page.category }}">{{ page.category }}</span>
+      {% endif %}
+      {% if page.difficulty %}
+        <span class="diff-badge {{ page.difficulty }}">{{ page.difficulty }}</span>
+      {% endif %}
+      {% if page.points %}
+        <span class="card-cat misc" style="width:auto">{{ page.points }} pts</span>
+      {% endif %}
+    </div>
+
+    <p class="post-meta">
+      {% if page.ctf %}<strong style="color:var(--text)">{{ page.ctf }}</strong> &nbsp;&bull;&nbsp;{% endif %}
+      {{ page.date | date: "%B %d, %Y" }}
+      {% if page.tags and page.tags.size > 0 %}
+        &nbsp;&bull;&nbsp;
+        {% for tag in page.tags %}
+          <span style="color:var(--accent-hl)">#{{ tag }}</span>{% unless forloop.last %} {% endunless %}
+        {% endfor %}
+      {% endif %}
+    </p>
+  </header>
+
+  <div class="prose">
+    {{ content }}
+  </div>
+</article>

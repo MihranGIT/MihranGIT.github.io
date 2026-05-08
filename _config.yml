@@ -1,0 +1,34 @@
+title: "MihranGIT — CTF Writeups"
+description: "Cybersecurity CTF writeups covering web, pwn, crypto, forensics, and more."
+url: "https://MihranGIT.github.io"
+baseurl: ""
+author: "MihranGIT"
+
+markdown: kramdown
+highlighter: rouge
+permalink: /writeups/:year/:month/:day/:title/
+
+kramdown:
+  syntax_highlighter: rouge
+  syntax_highlighter_opts:
+    block:
+      line_numbers: true
+
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
+
+defaults:
+  - scope:
+      path: ""
+      type: "posts"
+    values:
+      layout: "post"
+
+categories_order:
+  - web
+  - pwn
+  - crypto
+  - forensics
+  - rev
+  - misc
