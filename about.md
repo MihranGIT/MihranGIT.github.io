@@ -5,10 +5,10 @@ title: About
 
 <div class="about-card">
   <h1>MihranGIT</h1>
-  <p>Cybersecurity enthusiast and CTF player. This site documents my solutions and learnings from competitions.</p>
+  <p>Security notes and writeups — things I learn, break, or read about, written down so I (and maybe you) can come back to them later.</p>
 </div>
 
-## Focus areas
+## What you'll find here
 
 <div class="skill-grid">
   <div class="skill-chip">Web Exploitation</div>
@@ -16,6 +16,7 @@ title: About
   <div class="skill-chip">Cryptography</div>
   <div class="skill-chip">Forensics</div>
   <div class="skill-chip">Reverse Engineering</div>
+  <div class="skill-chip">CI/CD Security</div>
   <div class="skill-chip">OSINT</div>
 </div>
 
