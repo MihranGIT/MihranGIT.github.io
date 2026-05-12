@@ -1,16 +1,16 @@
 ---
 layout: default
-title: "CTF Writeups"
+title: "Security sharing"
 ---
 
 <section class="hero">
   <h1><span class="prompt">$</span> cat writeups.md</h1>
-  <p>CTF competition writeups — web exploitation, binary exploitation, cryptography, forensics, reverse engineering, and more.</p>
+  <p>Security sharing — writeups, research, and notes on offensive &amp; defensive security.</p>
 </section>
 
 {% assign all_posts = site.posts %}
 {% assign total = all_posts | size %}
-{% assign ctfs = all_posts | map: "ctf" | uniq | compact | size %}
+{% assign all_tags = all_posts | map: "tags" | join: ',' | split: ',' | uniq | compact %}
 {% assign categories = all_posts | map: "category" | uniq | compact %}
 
 {% if total > 0 %}
@@ -20,12 +20,12 @@ title: "CTF Writeups"
     <span class="stat-label">Writeups</span>
   </div>
   <div class="stat">
-    <span class="stat-num">{{ ctfs }}</span>
-    <span class="stat-label">CTFs</span>
-  </div>
-  <div class="stat">
     <span class="stat-num">{{ categories | size }}</span>
     <span class="stat-label">Categories</span>
+  </div>
+  <div class="stat">
+    <span class="stat-num">{{ all_tags | size }}</span>
+    <span class="stat-label">Tags</span>
   </div>
 </div>
 
@@ -48,7 +48,7 @@ title: "CTF Writeups"
         <span class="card-cat {{ post.category | default: 'misc' }}">{{ post.category | default: "misc" }}</span>
         <div class="card-body">
           <div class="card-title">{{ post.title }}</div>
-          <div class="card-meta">{{ post.ctf | default: "Unknown CTF" }}</div>
+          <div class="card-meta">{{ post.tags | join: " · " | default: "untagged" }}</div>
         </div>
         <div class="card-right">
           {% if post.difficulty %}
