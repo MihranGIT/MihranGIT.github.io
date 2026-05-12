@@ -1,5 +1,5 @@
-title: "MihranGIT — CTF Writeups"
-description: "Cybersecurity CTF writeups covering web, pwn, crypto, forensics, and more."
+title: "MihranGIT — Security sharing"
+description: "Security sharing — writeups, research, and notes on offensive & defensive security."
 url: "https://MihranGIT.github.io"
 baseurl: ""
 author: "MihranGIT"
@@ -31,4 +31,5 @@ categories_order:
   - crypto
   - forensics
   - rev
+  - cicd
   - misc
