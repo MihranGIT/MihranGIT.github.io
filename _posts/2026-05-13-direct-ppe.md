@@ -1,6 +1,7 @@
 ---
 title: "Direct Poisoned Pipeline Execution (D-PPE)"
 date: 2026-05-13
+category: cicd
 tags: [security, cicd, ppe]
 breadcrumb: "Security > CICD > Direct PPE"
 ---
