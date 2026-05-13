@@ -4,8 +4,10 @@ document.querySelectorAll('.filter-btn').forEach(btn => {
     btn.classList.add('active');
 
     const filter = btn.dataset.filter;
-    document.querySelectorAll('.writeup-card').forEach(card => {
-      card.style.display = (filter === 'all' || card.dataset.category === filter) ? 'flex' : 'none';
+
+    document.querySelectorAll('.category-group').forEach(group => {
+      const match = (filter === 'all' || group.dataset.category === filter);
+      group.style.display = match ? 'block' : 'none';
     });
   });
 });

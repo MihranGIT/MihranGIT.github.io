@@ -5,9 +5,9 @@ layout: default
 <article>
   <header class="post-header">
     <p class="post-breadcrumb">
-      <a href="{{ '/' | relative_url }}">~/writeups</a>
-      &nbsp;/&nbsp;{{ page.ctf | default: "CTF" }}
-      &nbsp;/&nbsp;{{ page.category | default: "misc" }}
+      <a href="{{ '/' | relative_url }}">Security</a>
+      &nbsp;›&nbsp;<a href="{{ '/' | relative_url }}#cat-{{ page.category | default: 'misc' }}">{{ page.category | default: "misc" | upcase }}</a>
+      &nbsp;›&nbsp;<span>{{ page.title }}</span>
     </p>
 
     <h1 class="post-title">{{ page.title }}</h1>

@@ -197,7 +197,52 @@ img { max-width: 100%; height: auto; }
 .card-cat.crypto   { background: #3b2800; color: #fbbf24; }
 .card-cat.forensics{ background: #072a1e; color: #34d399; }
 .card-cat.rev      { background: #2d1654; color: #c084fc; }
+.card-cat.cicd     { background: #1a2e3b; color: #67e8f9; }
 .card-cat.misc     { background: #1f2428; color: #9ca3af; }
+
+/* Hierarchical tree listing */
+.writeup-tree { display: flex; flex-direction: column; gap: 1.5rem; }
+
+.tree-root {
+  font-family: var(--font-mono);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--accent-hl);
+  margin-bottom: .25rem;
+  padding-bottom: .5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.category-group { padding-left: 1rem; }
+
+.category-heading {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  font-family: var(--font-mono);
+  font-size: .95rem;
+  font-weight: 600;
+  margin: .5rem 0 .75rem;
+  color: var(--text);
+}
+
+.tree-branch, .tree-leaf {
+  font-family: var(--font-mono);
+  color: var(--muted);
+  flex-shrink: 0;
+}
+
+.category-count {
+  font-size: .7rem;
+  color: var(--muted);
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 99px;
+  padding: .05rem .45rem;
+}
+
+.category-group .writeup-list { padding-left: 1.75rem; }
+.category-group .writeup-card .card-cat { display: none; }
 
 .card-body { flex: 1; min-width: 0; }
 .card-title {

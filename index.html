@@ -11,7 +11,7 @@ title: "Security sharing"
 {% assign all_posts = site.posts %}
 {% assign total = all_posts | size %}
 {% assign all_tags = all_posts | map: "tags" | join: ',' | split: ',' | uniq | compact %}
-{% assign categories = all_posts | map: "category" | uniq | compact %}
+{% assign grouped = all_posts | group_by: "category" %}
 
 {% if total > 0 %}
 <div class="stats-bar">
@@ -20,7 +20,7 @@ title: "Security sharing"
     <span class="stat-label">Writeups</span>
   </div>
   <div class="stat">
-    <span class="stat-num">{{ categories | size }}</span>
+    <span class="stat-num">{{ grouped | size }}</span>
     <span class="stat-label">Categories</span>
   </div>
   <div class="stat">
@@ -31,32 +31,47 @@ title: "Security sharing"
 
 <div class="filter-bar">
   <button class="filter-btn active" data-filter="all">All</button>
-  {% for cat in categories %}
-    <button class="filter-btn" data-filter="{{ cat }}">{{ cat }}</button>
+  {% for group in grouped %}
+    <button class="filter-btn" data-filter="{{ group.name | default: 'misc' }}">{{ group.name | default: 'misc' }}</button>
   {% endfor %}
 </div>
 {% endif %}
 
-<div class="writeup-list" id="writeup-list">
-  {% if all_posts.size == 0 %}
+<div class="writeup-tree" id="writeup-tree">
+  {% if total == 0 %}
     <p style="color:var(--muted);font-family:var(--font-mono);text-align:center;padding:3rem 0;">
       No writeups yet — add your first one in <code>_posts/</code>
     </p>
   {% else %}
-    {% for post in all_posts %}
-      <a href="{{ post.url | relative_url }}" class="writeup-card" data-category="{{ post.category | default: 'misc' }}">
-        <span class="card-cat {{ post.category | default: 'misc' }}">{{ post.category | default: "misc" }}</span>
-        <div class="card-body">
-          <div class="card-title">{{ post.title }}</div>
-          <div class="card-meta">{{ post.tags | join: " · " | default: "untagged" }}</div>
+    <h2 class="tree-root">Security</h2>
+
+    {% for group in grouped %}
+      {% assign cat = group.name | default: 'misc' %}
+      <section class="category-group" id="cat-{{ cat }}" data-category="{{ cat }}">
+        <h3 class="category-heading">
+          <span class="tree-branch">└──</span>
+          <span class="card-cat {{ cat }}">{{ cat }}</span>
+          <span class="category-count">{{ group.items | size }}</span>
+        </h3>
+
+        <div class="writeup-list">
+          {% for post in group.items %}
+            <a href="{{ post.url | relative_url }}" class="writeup-card" data-category="{{ cat }}">
+              <span class="tree-leaf">├──</span>
+              <div class="card-body">
+                <div class="card-title">{{ post.title }}</div>
+                <div class="card-meta">{{ post.tags | join: " · " | default: "untagged" }}</div>
+              </div>
+              <div class="card-right">
+                {% if post.difficulty %}
+                  <span class="diff-badge {{ post.difficulty }}">{{ post.difficulty }}</span>
+                {% endif %}
+                <span class="card-date">{{ post.date | date: "%Y-%m-%d" }}</span>
+              </div>
+            </a>
+          {% endfor %}
         </div>
-        <div class="card-right">
-          {% if post.difficulty %}
-            <span class="diff-badge {{ post.difficulty }}">{{ post.difficulty }}</span>
-          {% endif %}
-          <span class="card-date">{{ post.date | date: "%Y-%m-%d" }}</span>
-        </div>
-      </a>
+      </section>
     {% endfor %}
   {% endif %}
 </div>
