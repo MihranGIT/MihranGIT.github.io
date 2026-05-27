@@ -65,13 +65,21 @@ with no isolation.
 ### CI/CD variable extraction
 
 GitLab injects CI/CD variables as environment variables into every job.
-Two variable properties matter for an attacker:
+Four variable properties matter for an attacker:
 
+- **Protected** — the variable is only injected into jobs running on
+  protected branches or tags. If a variable is *not* marked protected, any
+  feature branch — even a personal throwaway — can access it. This is a
+  common misconfiguration: admins mask a secret but forget to protect it.
 - **Masked** — the value is hidden in job logs. Encoding it (`base64`, hex,
   reversed string…) usually bypasses the mask.
 - **Expanded** — the value is interpolated with other variables before
   injection. An expanded variable that references another secret can leak it
   even if the original is restricted.
+- **File** (variable type) — instead of injecting the value directly, GitLab
+  writes it to a temp file and sets the env var to the file *path*. The value
+  won't appear in logs by default, but the attacker just `cat`s the path —
+  it is not a security boundary.
 
 ### Typical flow
 
