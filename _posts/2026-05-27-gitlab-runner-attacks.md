@@ -80,6 +80,15 @@ Four variable properties matter for an attacker:
   writes it to a temp file and sets the env var to the file *path*. The value
   won't appear in logs by default, but the attacker just `cat`s the path —
   it is not a security boundary.
+- **Scope** — variables live at three levels:
+  - **Instance** — available to every project on the GitLab server.
+  - **Group** — available to *every project under the group*, including
+    subgroups. A leaky group-level token compromises dozens of repos at once.
+  - **Project** — scoped to a single project. Still reachable from any branch
+    unless also marked *protected*.
+
+  Group-level secrets are the highest-value find: one push to a low-importance
+  project in the group can dump a token usable across the whole group.
 
 ### Typical flow
 
@@ -105,6 +114,74 @@ Four variable properties matter for an attacker:
 
 > Tools like [Nord-Stream][nordstream] (Synacktiv) automate CI/CD secrets
 > extraction across GitLab, GitHub, and Azure DevOps.
+
+---
+
+## Recon once you land on the runner
+
+Job execution = code execution on the runner. The next question is *where*
+you actually landed and what's reachable from there. Walk the checklist:
+
+### Where is the runner hosted?
+
+- **Cloud VM** (AWS / GCP / Azure) — hit the instance metadata service for
+  short-lived credentials tied to the runner's role:
+  - AWS: `curl http://169.254.169.254/latest/meta-data/iam/security-credentials/`
+    (IMDSv2: grab a token first with `PUT /latest/api/token`).
+  - GCP: `curl -H "Metadata-Flavor: Google" http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token`.
+  - Azure: `curl -H "Metadata: true" "http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=https://management.azure.com/"`.
+- **On-prem / bare metal** — look for files dropped by config management
+  (Ansible vaults, Chef encrypted bags, `~/.ssh/`, mounted NFS shares,
+  `/etc/gitlab-runner/config.toml`).
+
+### Network — what else is reachable?
+
+- Map internal CIDR from `ip a`, `/etc/resolv.conf`, routing table.
+- Sweep for adjacent hosts (GitLab server itself, internal registry, Vault,
+  artifact store, package proxy). Runners often sit in a build VLAN with
+  more internal access than a typical workload.
+- Test **outbound exfil paths** — direct HTTPS to the internet, DNS
+  resolution of attacker-controlled domains, ICMP. Egress is often
+  *implicitly* permitted because the runner needs to fetch packages.
+- Check `/etc/hosts` and resolver behaviour for short names — they often
+  reveal internal service topology.
+
+### Container — is the executor a real boundary?
+
+If the job runs in Docker / containerd, verify whether you're actually
+contained:
+
+- `cat /proc/1/cgroup`, `/.dockerenv`, `ls -la /` to confirm container.
+- `capsh --print` — look for dangerous capabilities (`CAP_SYS_ADMIN`,
+  `CAP_SYS_PTRACE`, `CAP_NET_ADMIN`). `SYS_ADMIN` is often enough for a
+  trivial escape via `cgroups release_agent`.
+- Privileged container? `ls /dev` shows host devices, `mount` lets you
+  attach the host's root disk.
+- **Host mounts** — `/var/run/docker.sock`, `/`, or `/proc` mounted in is
+  game over: spawn a sibling privileged container or write to the host
+  filesystem directly.
+- **Known Docker / runc CVEs** — e.g. CVE-2019-5736 (runc), CVE-2024-21626
+  (`runc leaky fd`). Check versions before throwing exploits.
+- **Kernel exploits** — possible but **noisy and risky in prod**. A failed
+  attempt can panic the host. Don't go there without an explicit
+  authorization to do so.
+
+### Kubernetes executor — pod misconfigurations
+
+If the runner is a pod in a cluster, the blast radius is usually larger:
+
+- `env | grep KUBERNETES` — `KUBERNETES_SERVICE_HOST` confirms you're inside
+  a pod.
+- `cat /var/run/secrets/kubernetes.io/serviceaccount/token` — try it
+  against the API server (`kubectl auth can-i --list`). Over-broad RBAC
+  (`get/list secrets`, `create pods`) on the runner's service account is
+  the typical win.
+- Check `hostNetwork`, `hostPID`, `hostPath` mounts in the pod spec —
+  any of these enable host or cluster pivots.
+- Reachable in-cluster services: `kubelet` API on `:10250`, the metadata
+  service via the node, internal ingress, etcd if exposed.
+- Look for cached image-pull secrets and CI runner tokens in the pod
+  filesystem (`/etc/gitlab-runner/`, `/secrets/`, projected volumes).
 
 ---
 
