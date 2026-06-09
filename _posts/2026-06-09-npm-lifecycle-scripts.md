@@ -50,20 +50,20 @@ here too.
 ```
    ┌───────────┐   npm install    ┌─────────────┐   resolves &   ┌──────────────┐
    │ Developer │ ───────────────▶ │  npm client │ ─────────────▶ │  registry    │
-   │  / CI      │                 │             │   downloads    │ (npmjs.com)  │
-   └───────────┘                 └──────┬──────┘                 └──────────────┘
-                                        │ runs lifecycle scripts
-                                        ▼  (preinstall/install/postinstall)
-                              ┌──────────────────────┐
-                              │  attacker's code,    │
-                              │  as YOUR user         │
-                              └──────────┬───────────┘
+   │   / CI    │                  │             │   downloads    │ (npmjs.com)  │
+   └───────────┘                  └──────┬──────┘                └──────────────┘
+                                         │ runs lifecycle scripts
+                                         ▼  (preinstall/install/postinstall)
+                             ┌───────────────────────┐
+                             │  attacker's code,     │
+                             │  as YOUR user         │
+                             └───────────┬───────────┘
                                          ▼
-                              ┌──────────────────────┐
-                              │ env vars, ~/.npmrc    │
-                              │ tokens, SSH keys,     │
-                              │ AWS creds, cloud meta │
-                              └──────────────────────┘
+                             ┌───────────────────────┐
+                             │ env vars, ~/.npmrc    │
+                             │ tokens, SSH keys,     │
+                             │ AWS creds, cloud meta │
+                             └───────────────────────┘
 ```
 
 The attacker needs:
