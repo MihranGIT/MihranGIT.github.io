@@ -198,6 +198,7 @@ img { max-width: 100%; height: auto; }
 .card-cat.forensics{ background: #072a1e; color: #34d399; }
 .card-cat.rev      { background: #2d1654; color: #c084fc; }
 .card-cat.cicd     { background: #1a2e3b; color: #67e8f9; }
+.card-cat.supply-chain { background: #3b2410; color: #fb923c; }
 .card-cat.misc     { background: #1f2428; color: #9ca3af; }
 
 /* Hierarchical tree listing */
